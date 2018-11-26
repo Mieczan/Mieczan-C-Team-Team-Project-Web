@@ -6,4 +6,4 @@ router.get('/', function(req, res){
 	res.render('index'); 
 });
 
-module.exports = router;chrome-extension://mpognobbkildjkofajifpdfhcoklimli/components/startpage/startpage.html?section=Speed-dials&activeSpeedDialIndex=0
+module.exports = router;
