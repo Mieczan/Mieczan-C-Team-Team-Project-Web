@@ -1,6 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
+var User = require('../modles/user');
+
+//Settings
+router.get('/settings', function(req, res){ 
+	res.render('settings'); 
+});
+//Basket
+router.get('/basket', function(req, res){ 
+	res.render('basket'); 
+});
 //Register 
 router.get('/register', function(req, res){ 
 	res.render('register'); 
@@ -10,15 +20,22 @@ router.get('/login', function(req, res){
 	res.render('login'); 
 });
 
+//logout
+router.get('/logout', function(req, res){ 
+	res.render('logout'); 
+});
+
+
+
 //Register user
 router.post('/register', function(req, res){ 
 	var name = req.body.name;
 	var email = req.body.email;
 	var username = req.body.username;
 	var password = req.body.password;
-	var password2 = req.body.password2;
+	var password2 = req.body.password;
 
-	console.log(name);
+
 
 	// Validation
 	req.checkBody('name', 'Name is required').notEmpty();
@@ -32,41 +49,31 @@ router.post('/register', function(req, res){
 
 
 	if (errors) {
-		//re-render the form 
+		//re-render the form with error displayed 
 		res.render('register', {
 			errors: errors
 		});
 	}
 	else {
-		//checking for email and username are already taken
-		User.findOne({ username: { 
-			"$regex": "^" + username + "\\b", "$options": "i"
-	}}, function (err, user) {
-			User.findOne({ email: { 
-				"$regex": "^" + email + "\\b", "$options": "i"
-		}}, function (err, mail) {
-				if (user || mail) {
-					res.render('register', {
-						user: user,
-						mail: mail
-					});
-				}
-				else {
-					var newUser = new User({
-						name: name,
-						email: email,
-						username: username,
-						password: password
-					});
-					User.createUser(newUser, function (err, user) {
-						if (err) throw err;
-						console.log(user);
-					});
-         	req.flash('success_msg', 'You are registered and can now login');
-					res.redirect('/users/login');
-				}
-			});
+		
+		var newUser = new User({
+			name: name,
+			email: email,
+			username: username,
+			password: password
 		});
+
+		User.createUser(newUser, function(err, user){
+			
+			console.log(user);
+			console.log(name);
+
+		});
+
+        req.flash('success_msg','You are now registered and can log in');
+
+        res.redirect('/users/login');
+ 
 	}
 
 	
